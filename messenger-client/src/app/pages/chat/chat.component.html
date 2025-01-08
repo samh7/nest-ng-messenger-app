@@ -1,0 +1,81 @@
+<div class="sticky top-0 min-h-screen pb-[50px] scroll-smooth">
+  <div
+    class="w-full h-[60px] sticky top-0 bg-white flex items-center px-[10px]"
+  >
+    <div class="flex space-x-3 items-center pl-4">
+      <button (click)="goBack()">
+        <img
+          class="w-[20px] h-[20px] rounded-full"
+          src="/images/arrow.png"
+          alt=""
+        />
+      </button>
+
+      <img
+        class="w-[40px] h-[40px] rounded-full"
+        src="/images/girl-pf.png"
+        alt=""
+      />
+      <span class="text-2xl">Me</span>
+    </div>
+    <div class="flex-1"></div>
+    <div class="relative">
+      <button (click)="toggleMoreOption()">
+        <img class="w-[21px] h-[21px]" src="/images/more.png" alt="" />
+      </button>
+
+      @if(moreOptionShow()){
+      <div
+        class="absolute top-[50px] right-[10px] w-[200px] rounded-md border border-gray-300 h-[200px] bg-white p-3"
+      >
+        <ul class="list-none text-lg space-y-4">
+          <li class="cursor-pointer">Clear Messages</li>
+          <li class="cursor-pointer">Block User</li>
+          <li class="cursor-pointer">Starred Messages</li>
+          <li class="cursor-pointer">Search</li>
+        </ul>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div
+    #messageContainer
+    class="relative overflow-auto w-full h-[calc(100vh_-_60px)] bg-[url('/images/chat-bg-wa.png')] bg-cover bg-center p-6"
+  >
+    @for (item of messages(); track $index; ) {
+    <app-chat-component
+      [text]="item.text"
+      [isSender]="user()!.username !== item.senderUsername"
+    />
+
+    }
+    @if (isReceiverTyping()) {
+    <div class="w-full text-white text-2xl flex items-center">
+      <div
+        class="w-[150px] grid place-items-center h-[44px] bg-blue-400 rounded-full"
+      >
+        Typing...
+      </div>
+    </div>
+    }
+  </div>
+
+  <form
+    (submit)="sendMessage()"
+    [formGroup]="messageForm"
+    class="w-full h-[70px] flex items-center sticky bottom-0 px-1"
+  >
+    <input
+      (ngModelChange)="typingEvent()"
+      formControlName="message"
+      class="border border-gray-500 h-[50px] flex-1"
+      type="text"
+    />
+    <button type="submit" class="bg-blue-500 w-[80px] h-[50px] text-white">
+      Send
+    </button>
+  </form>
+</div>
+
+<!-- {{}} -->

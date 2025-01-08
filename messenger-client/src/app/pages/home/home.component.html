@@ -1,0 +1,22 @@
+<form
+  (submit)="formSubmitted()"
+  [formGroup]="receiverForm"
+  class="sticky flex flex-col space-y-3 w-full h-[100px] mt-[50px] bottom-0 flex justify-end items-center px-10"
+>
+  <!-- <input placeholder="sender" class="border border-gray-400" type="text" name="" id="" /> -->
+  <input
+    formControlName="receiver"
+    placeholder="to"
+    class="border px-2 h-[40px] border-gray-400"
+    type="text"
+    name=""
+    id=""
+  />
+  <button
+    type="submit"
+    class="bg-blue-600 text-white h-[60px] w-[60px] rounded-full grid place-items-center"
+  >
+    Text
+    <!-- <img class="w-[40px] h-[40px]" src="/images/send.png" alt="" /> -->
+  </button>
+</form>
