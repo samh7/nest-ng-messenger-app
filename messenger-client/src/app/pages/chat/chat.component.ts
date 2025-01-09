@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChatComponentComponent } from "../../components/chat-component/chat-component.component";
 import { MessagesService } from '../../services/messages.service';
@@ -21,10 +21,10 @@ import { TypingDto } from '../../../shared/interfaces/typing-dto';
   templateUrl: './chat.component.html',
   styles: ``
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, AfterViewChecked {
   router = inject(Router)
   route = inject(ActivatedRoute)
-  receiverName = signal("")
+  receiverName = signal<string | null>(null)
   messageService = inject(MessagesService)
   messages = signal<Message[]>([])
   authService = inject(AuthService)
@@ -39,18 +39,37 @@ export class ChatComponent implements OnInit {
   eventsService = inject(EventsService)
   isTyping = signal(false)
   private typingTimeout: any
-
+  cdr = inject(ChangeDetectorRef)
   private isScrolling: boolean = false
 
-  @ViewChild('messageContainer', { static: true }) messageContainer: ElementRef | null = null;
+  @ViewChild('messageContainer', { static: true }) messageContainer!: ElementRef;
+  isUserInitiatedScroll = false;
+
+
+  ngAfterViewChecked() {
+    if (!this.isUserInitiatedScroll) {
+      this.scrollToBottom();
+    }
+    this.cdr.detectChanges();
+  }
 
 
   ngOnInit(): void {
     this.user.set(this.authService.getUserFromStorage()!)
     this.receiverName.set(this.route.snapshot.paramMap.get("name")!)
-    const senderReceiverDto: SenderReceiverDto = {
-      senderUsername: this.user()!.username!,
-      receiverUsername: this.receiverName()
+    let senderReceiverDto!: SenderReceiverDto
+
+    if (this.receiverName()) {
+      senderReceiverDto = {
+        senderUsername: this.user()!.username!,
+        receiverUsername: this.receiverName()!
+      }
+    }
+    else {
+
+      senderReceiverDto = {
+        senderUsername: this.user()!.username!,
+      }
     }
 
     this.eventsService.typing$.subscribe((typing) => {
@@ -74,10 +93,20 @@ export class ChatComponent implements OnInit {
   sendMessage() {
     if (!this.messageForm.value.message) return
 
-    const createMessageDto: CreateMessageDto = {
-      receiverUsername: this.receiverName(),
-      senderUsername: this.user()?.username!,
-      text: this.messageForm.value.message
+    let createMessageDto!: CreateMessageDto;
+
+    if (this.receiverName()) {
+      createMessageDto = {
+        receiverUsername: this.receiverName()!,
+        senderUsername: this.user()?.username!,
+        text: this.messageForm.value.message
+      }
+    }
+    else {
+      createMessageDto = {
+        senderUsername: this.user()?.username!,
+        text: this.messageForm.value.message
+      }
     }
 
     console.log(this.messageForm.value.message)
@@ -114,14 +143,18 @@ export class ChatComponent implements OnInit {
     }, 1000)
   }
 
-  scrollToBottom() {
-    if (this.messageContainer && !this.isScrolling) {
-      this.isScrolling = true; // Set the flag
-      setTimeout(() => {
-        const element = this.messageContainer?.nativeElement;
-        element.scrollTop = element.scrollHeight + 200; // Scroll with offset
-        this.isScrolling = false; // Reset the flag after scrolling
-      }, 0); // Use setTimeout for asynchronous execution
+  scrollToBottom(): void {
+    try {
+      const container = this.messageContainer!.nativeElement;
+      const lastMessage = container.lastElementChild;
+
+      if (lastMessage) {
+        lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        lastMessage
+      }
+
+    } catch (error) {
+      console.error('Error in scrollToBottom:', error);
     }
   }
 

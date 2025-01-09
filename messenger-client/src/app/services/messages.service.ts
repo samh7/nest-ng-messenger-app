@@ -17,6 +17,9 @@ export class MessagesService {
     return this.http.post<Message[]>(url, senderReceiverDto)
   }
 
+  getChatHistory(currentUserName: string) {
+    return this.http.post<string[]>(backend_url + "/users/chat-history", { currentUserName })
+  }
   sendMessageBetween(createMessageDto: CreateMessageDto) {
     const url = backend_url + "/users/messages/new"
     return this.http.post<Message>(url, createMessageDto)

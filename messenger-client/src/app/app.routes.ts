@@ -27,6 +27,10 @@ export const routes: Routes = [
     path: "chat/:name",
     component: ChatComponent
   }
-,
+  , {
+    path: "chat",
+    component: ChatComponent
+  }
+  ,
   { path: '**', redirectTo: '' },
 ];

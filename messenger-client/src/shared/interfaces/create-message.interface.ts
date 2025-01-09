@@ -3,5 +3,5 @@ export interface CreateMessageDto {
 
   senderUsername: string
 
-  receiverUsername: string
+  receiverUsername?: string
 }

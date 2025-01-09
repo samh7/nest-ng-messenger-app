@@ -4,6 +4,8 @@ import { CreateUserDto, LoginDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserReceiverDto } from './dto/user-receiver.dto';
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
+import { ChatHistorydDto } from './dto/chat-history.dto';
+import { UpdatetChatHistorydDto } from './dto/update-chat-history.dto';
 
 @Controller('users')
 export class UsersController {
@@ -35,6 +37,32 @@ export class UsersController {
     console.log(createMessageDto)
 
     return this.usersService.sendMessagesBetween(createMessageDto);
+  }
+
+
+  @Get("chat-history/:username")
+  CreateChatHitsory(
+    @Param('username') username: string
+  ) {
+    return this.usersService.createChatHistory(username);
+  }
+
+
+  @Post("chat-history/update")
+  addToChatHitsory(
+    @Body() updatetChatHistorydDto: UpdatetChatHistorydDto
+
+  ) {
+    return this.usersService.addToChatHitsory(updatetChatHistorydDto);
+  }
+
+
+  @Post("chat-history")
+  findChatHitsory(
+    @Body() chatHistorydDto: ChatHistorydDto
+
+  ) {
+    return this.usersService.findChatHitsory(chatHistorydDto);
   }
 
 

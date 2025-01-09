@@ -1,22 +1,54 @@
-<form
-  (submit)="formSubmitted()"
-  [formGroup]="receiverForm"
-  class="sticky flex flex-col space-y-3 w-full h-[100px] mt-[50px] bottom-0 flex justify-end items-center px-10"
->
-  <!-- <input placeholder="sender" class="border border-gray-400" type="text" name="" id="" /> -->
-  <input
-    formControlName="receiver"
-    placeholder="to"
-    class="border px-2 h-[40px] border-gray-400"
-    type="text"
-    name=""
-    id=""
-  />
-  <button
-    type="submit"
-    class="bg-blue-600 text-white h-[60px] w-[60px] rounded-full grid place-items-center"
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <!-- Header -->
+  <div
+    class="bg-white h-[60px] flex items-center justify-between px-4 shadow-md"
   >
-    Text
-    <!-- <img class="w-[40px] h-[40px]" src="/images/send.png" alt="" /> -->
+    <span class="text-xl font-bold">WhatsApp</span>
+    <div class="flex space-x-4">
+      <button>
+        <img src="/images/search-icon.png" alt="Search" class="w-6 h-6" />
+      </button>
+      <button>
+        <img src="/images/menu-icon.png" alt="Menu" class="w-6 h-6" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="bg-white p-2">
+    <div class="flex items-center bg-gray-200 rounded-full px-3 py-2">
+      <img src="/images/search-icon.png" alt="Search" class="w-5 h-5 mr-2" />
+      <input
+        type="text"
+        placeholder="Search or start new chat"
+        class="bg-transparent outline-none w-full text-sm"
+      />
+    </div>
+  </div>
+
+  <!-- Chat List -->
+  <div class="flex-1 overflow-y-auto">
+    <div class="divide-y">
+      <!-- Saved Messages Chat Item -->
+
+      <div>
+        <app-chat-head />
+      </div>
+
+      @for (chatHistoryItem of chatHistory(); track $index) {
+
+      <!-- Chat History Item -->
+
+      <app-chat-head [receiverName]="chatHistoryItem" />
+
+      }
+    </div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button
+    class="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-green-600"
+  >
+    <img src="/images/chat-icon.png" alt="New Chat" class="w-6 h-6" />
   </button>
-</form>
+</div>

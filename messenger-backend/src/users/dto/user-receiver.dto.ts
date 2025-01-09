@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UserReceiverDto {
 
@@ -7,7 +7,7 @@ export class UserReceiverDto {
     senderUsername: string
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     receiverUsername: string
 
 

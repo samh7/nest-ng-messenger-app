@@ -1,0 +1,23 @@
+<div
+  [routerLink]="route()"
+  class="
+
+  flex items-center p-4 bg-white hover:bg-gray-100 cursor-pointer"
+>
+  <img
+    src="/images/girl-pf.png"
+    alt="User"
+    class="w-12 h-12 rounded-full mr-4"
+  />
+  <div class="flex-1">
+    <div class="flex justify-between">
+      <span class="font-medium text-gray-900">{{
+        !receiverName() ? "Saved Messages" : receiverName()
+      }}</span>
+      <span class="text-sm text-gray-500">{{
+        lastMessageSend() | utcToLocalTime
+      }}</span>
+    </div>
+    <p class="text-sm text-gray-600 truncate">{{ lastMessage() }}</p>
+  </div>
+</div>

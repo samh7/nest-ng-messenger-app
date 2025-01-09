@@ -23,14 +23,6 @@ export class MessagesService {
     let receiverExists, senderExists;
 
 
-    try {
-      receiverExists = await this.usersService.findOne(createMessageDto.receiverUsername)
-      if (!receiverExists) throw new NotFoundException()
-
-    }
-    catch (_error) {
-      throw new HttpException('Receiver user not found', HttpStatus.BAD_REQUEST);
-    }
 
 
     try {
@@ -40,6 +32,23 @@ export class MessagesService {
     catch (_error) {
       throw new HttpException('Receiver user not found', HttpStatus.BAD_REQUEST);
     }
+
+
+    if (createMessageDto.receiverUsername) {
+      try {
+
+        receiverExists = await this.usersService.findOne(createMessageDto.receiverUsername)
+        if (!receiverExists) throw new NotFoundException()
+
+      }
+      catch (_error) {
+        throw new HttpException('Receiver user not found', HttpStatus.BAD_REQUEST);
+      }
+    }
+    else {
+      receiverExists = senderExists
+    }
+
 
     const savedMessage = await this.messageRepository.save(createMessageDto)
 

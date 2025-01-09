@@ -8,3 +8,9 @@ export function sortMessages(
 
     return messages.reverse();
 }
+
+export function filterChatHistory(usernames: string[]) {
+
+    return usernames.filter((item, index) => usernames.indexOf(item) === index);
+
+}

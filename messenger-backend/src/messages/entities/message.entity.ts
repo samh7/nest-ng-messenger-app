@@ -10,6 +10,6 @@ export class Message extends BaseEntity {
     @Column({ nullable: false })
     senderUsername: string
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     receiverUsername: string
 }

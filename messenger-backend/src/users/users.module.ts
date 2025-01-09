@@ -4,10 +4,11 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Message } from 'src/messages/entities/message.entity';
+import { RecentUserChats } from './entities/recent-user-chats.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Message])
+    TypeOrmModule.forFeature([User, Message, RecentUserChats])
   ],
   controllers: [
     UsersController],
