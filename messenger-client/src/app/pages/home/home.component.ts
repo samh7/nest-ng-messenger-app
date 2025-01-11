@@ -92,8 +92,11 @@ export class HomeComponent implements OnInit {
       })
     }
 
+  }
 
-
+  logoutUser() {
+    this.authService.deleteUserFromStorage()
+    this.router.navigate(["/login"])
   }
 
 }

@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LoginDto } from './dto/login.dto';
 import { User } from '../../../shared/interfaces/user.interface';
 
 @Component({
   selector: 'app-login',
   imports: [
+    RouterLink,
     ReactiveFormsModule
   ],
   templateUrl: './login.component.html',

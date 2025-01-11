@@ -78,7 +78,7 @@ export class UsersService {
     return plainToClass(User, canUserLogIn);
 
   }
-  
+
 
 
   async findAllMessagesBetween(userReceiverDto: UserReceiverDto) {
@@ -199,7 +199,7 @@ export class UsersService {
       const fetcheMessagesReceiver = await this.messageRepository.find({
 
         where: {
-          senderUsername:  Not(chatHistorydDto.currentUserName) && Not(IsNull()),
+          senderUsername: Not(chatHistorydDto.currentUserName) && Not(IsNull()),
           receiverUsername: chatHistorydDto.currentUserName
         }
 
