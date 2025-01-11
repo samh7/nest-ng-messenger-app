@@ -37,10 +37,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   isReceiverTyping = signal(false)
   location = inject(Location)
   eventsService = inject(EventsService)
-  // isTyping = signal(false)
-  private typingTimeout: any
+  private typingTimeout!: number
   cdr = inject(ChangeDetectorRef)
-  private isScrolling: boolean = false
+  private isScrolling = false
 
   @ViewChild('messageContainer', { static: true }) messageContainer!: ElementRef;
   isUserInitiatedScroll = false;
@@ -92,9 +91,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.eventsService.typing$.subscribe((typing: TypingDto) => {
       // this.isTyping.set(typing?.isTyping)
       this.isReceiverTyping.set(
-        (typing?.username === this.receiverName()) &&
+        (typing!.username === this.receiverName()) &&
         typing.isTyping &&
-        (typing?.receiverUsername === this.user()?.username!)
+        (typing!.receiverUsername === this.user()!.username!)
 
       )
     })
@@ -117,13 +116,13 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     if (this.receiverName()) {
       createMessageDto = {
         receiverUsername: this.receiverName()!,
-        senderUsername: this.user()?.username!,
+        senderUsername: this.user()!.username!,
         text: this.messageForm.value.message
       }
     }
     else {
       createMessageDto = {
-        senderUsername: this.user()?.username!,
+        senderUsername: this.user()!.username!,
         text: this.messageForm.value.message
       }
     }
@@ -179,8 +178,8 @@ export class ChatComponent implements OnInit, AfterViewChecked {
         lastMessage
       }
 
-    } catch (error) {
-      // console.error('Error in scrollToBottom:', error);
+    } catch (_) {
+      alert("Error")
     }
   }
 

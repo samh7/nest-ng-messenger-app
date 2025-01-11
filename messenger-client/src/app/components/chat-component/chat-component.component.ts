@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component,  input, signal } from '@angular/core';
 import { UtcToLocalTimePipe } from '../../pipes/utc-to-localtime.pipe';
 
 @Component({

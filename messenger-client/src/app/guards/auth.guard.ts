@@ -14,8 +14,9 @@ export class AuthGuardService implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
 
     this.user.set(this.authService.getUserFromStorage())
+    console.log(this.user(), "nul hahahahaha")
     if (!this.user()) {
-      this.router.navigate(["/"])
+      this.router.navigate(["/login"])
       return false
     }
 
@@ -27,7 +28,7 @@ export class AuthGuardService implements CanActivate {
         this.router.navigate(["/login"])
       }
     },
-      (_error) => {
+      (_) => {
         this.authService.deleteUserFromStorage()
         this.authService.clearUser()
         this.router.navigate(["/login"])

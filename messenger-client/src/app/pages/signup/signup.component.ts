@@ -38,8 +38,8 @@ export class SignupComponent {
       alert("Passwords don't match")
       return
     }
-    this.authService.signup(signupUser).subscribe((user: User) => {
 
+    this.authService.signup(signupUser).subscribe((_: User) => {
 
       this.router.navigate(["/login"])
 

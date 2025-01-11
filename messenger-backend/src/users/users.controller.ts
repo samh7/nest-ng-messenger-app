@@ -23,6 +23,13 @@ export class UsersController {
   login(@Body() LoginDto: LoginDto) {
     return this.usersService.login(LoginDto);
   }
+  @Get("isUser/:username")
+  userExists(
+    @Param('username') username: string
+  ) {
+    return this.usersService.findOne(username);
+  }
+
 
   @Post("messages")
   findAllMessagesBetween(

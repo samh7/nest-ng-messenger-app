@@ -3,13 +3,13 @@ import { CreateUserDto, LoginDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Not, Repository } from 'typeorm';
+import { Not, Repository, IsNull } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { UserReceiverDto } from './dto/user-receiver.dto';
 import { Message } from 'src/messages/entities/message.entity';
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
-import { extractUsernames, filterChatHistory, sortMessages } from '../shared/utils';
+import { extractUsernamesReceiver, extractUsernamesSender, filterChatHistory, sortMessages } from '../shared/utils';
 import { RecentUserChats } from './entities/recent-user-chats.entity';
 import { ChatHistorydDto } from './dto/chat-history.dto';
 import { UpdatetChatHistorydDto } from './dto/update-chat-history.dto';
@@ -78,6 +78,7 @@ export class UsersService {
     return plainToClass(User, canUserLogIn);
 
   }
+  
 
 
   async findAllMessagesBetween(userReceiverDto: UserReceiverDto) {
@@ -190,6 +191,7 @@ export class UsersService {
 
         where: {
           senderUsername: chatHistorydDto.currentUserName,
+          receiverUsername: Not(chatHistorydDto.currentUserName) && Not(IsNull())
         }
 
       })
@@ -197,14 +199,16 @@ export class UsersService {
       const fetcheMessagesReceiver = await this.messageRepository.find({
 
         where: {
+          senderUsername:  Not(chatHistorydDto.currentUserName) && Not(IsNull()),
           receiverUsername: chatHistorydDto.currentUserName
         }
 
       })
 
 
-      const receiveUsernames = extractUsernames(fetcheMessagesReceiver)
-      const senderUsernames = extractUsernames(fetcheMessagesSender)
+
+      const receiveUsernames = extractUsernamesSender(fetcheMessagesReceiver)
+      const senderUsernames = extractUsernamesReceiver(fetcheMessagesSender)
 
       const usernames = receiveUsernames.concat(senderUsernames)
 

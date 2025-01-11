@@ -5,6 +5,7 @@ import { User } from '../../../shared/interfaces/user.interface';
 import { Message } from '../../../shared/interfaces/message.interface';
 import { UtcToLocalTimePipe } from '../../pipes/utc-to-localtime.pipe';
 import { RouterLink } from '@angular/router';
+import { EventsService } from '../../services/events.service';
 
 @Component({
   selector: 'app-chat-head',
@@ -20,9 +21,8 @@ export class ChatHeadComponent implements OnInit {
   authService = inject(AuthService)
   user = signal<User | null>(null)
   route = signal("/chat/")
+  eventsService = inject(EventsService)
 
-  name = 'sila'
-  name2 = "sila"
 
   ngOnInit(): void {
     this.user.set(this.authService.getUserFromStorage())
@@ -51,7 +51,28 @@ export class ChatHeadComponent implements OnInit {
           this.lastMessageSend.set((last.createdAt))
         })
     }
+
+    this.eventsService.message$.subscribe((message: Message) => {
+      if (
+        message.receiverUsername === this.user()!.username &&
+        message.senderUsername === this.receiverName()
+
+      ) {
+
+        this.messageService.
+          getMessageBetween({
+            senderUsername: this.receiverName()!,
+            receiverUsername: this.user()!.username
+          })
+          .subscribe((messages) => {
+            const last = messages[messages.length - 1]
+            this.lastMessage.set(last.text)
+            this.lastMessageSend.set(last.createdAt)
+          })
+      }
+    })
   }
+
 
 
   // convertUTCDateToLocalTime(dateString: string) {

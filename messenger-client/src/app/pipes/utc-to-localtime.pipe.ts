@@ -25,7 +25,7 @@ export class UtcToLocalTimePipe implements PipeTransform {
 
       const formattedTime = `${hours}.${minutes.toString().padStart(2, '0')} ${ampm}`;
       return formattedTime;
-    } catch (error) {
+    } catch (_) {
       // console.error('Error converting date:', error);
       return 'Error converting date';
     }

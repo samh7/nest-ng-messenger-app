@@ -9,7 +9,7 @@ import { AuthGuardService } from './guards/auth.guard';
 export const routes: Routes = [
 
   {
-    path: "home",
+    path: "",
     component: HomeComponent
     , canActivate: [AuthGuardService]
 
@@ -17,10 +17,9 @@ export const routes: Routes = [
   },
 
   {
-    path: "",
-    redirectTo: "home",
+    path: "home",
+    redirectTo: "",
     pathMatch: "full"
-    // , canActivate: [AuthGuardService]
 
   },
 
@@ -55,7 +54,6 @@ export const routes: Routes = [
     component: StartChatComponent
     , canActivate: [AuthGuardService]
 
-  }
-  ,
-  { path: '**', redirectTo: '/home' },
+  },
+  { path: '**', redirectTo: "/", pathMatch: "full"},
 ];

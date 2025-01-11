@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SignupDto } from '../pages/signup/dto/sign-up.dto';
 import { User } from '../../shared/interfaces/user.interface';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { LoginDto } from '../pages/login/dto/login.dto';
 
 
@@ -15,7 +15,7 @@ export class AuthService {
 
   localStorageKey = "messenger_app"
 
-  userSubject = new BehaviorSubject<any>(null)
+  userSubject = new BehaviorSubject<User | null>(null)
   user$ = this.userSubject.asObservable()
 
   withCredentials = {
@@ -28,6 +28,10 @@ export class AuthService {
 
   status() {
     return this.http.get(backend_url + "/auth/status", this.withCredentials)
+  }
+
+  receiverUserExists(username: string) {
+    return this.http.get<User | null>(backend_url + `/users/isUser/${username}`, this.withCredentials)
   }
 
   signup(signupDto: SignupDto) {

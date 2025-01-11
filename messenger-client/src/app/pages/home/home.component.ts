@@ -4,20 +4,21 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ChatHeadComponent } from "../../components/chat-head/chat-head.component";
 import { MessagesService } from '../../services/messages.service';
-import { single } from 'rxjs';
 import { User } from '../../../shared/interfaces/user.interface';
 import { ChatComponentComponent } from "../../components/chat-component/chat-component.component";
 import { StartChatComponent } from "../../components/start-chat/start-chat.component";
+import { EventsService } from '../../services/events.service';
+import { Message } from '../../../shared/interfaces/message.interface';
+import { mergeAll } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   imports: [
-    RouterLink,
     ReactiveFormsModule,
     ChatHeadComponent,
-    ChatComponentComponent,
     StartChatComponent
   ],
+
   templateUrl: './home.component.html',
   styles: ``
 })
@@ -38,6 +39,7 @@ export class HomeComponent implements OnInit {
   isModalOpen = signal(false);
   user = signal<User | null>(null)
   messageService = inject(MessagesService)
+  eventsService = inject(EventsService)
 
   openModal() {
     this.isModalOpen.set(true)
@@ -51,7 +53,6 @@ export class HomeComponent implements OnInit {
 
 
   search() {
-    // console.log(this.searchForm.get("searchText")?.value)
     if (!this.searchForm.value.searchText) this.filteredChatHistory.set(this.chatHistory())
 
     this.filteredChatHistory.set(this.chatHistory().filter((value) => value.includes(this.searchForm.value.searchText!)))
@@ -59,13 +60,10 @@ export class HomeComponent implements OnInit {
 
   formSubmitted() {
 
-    this.user.set(this.authService.getUserFromStorage())
-    this.authService.user$.subscribe((currentUser) => {
+    const receiverName = this.receiverForm.value.receiver;
 
-      const receiverName = this.receiverForm.value.receiver;
-      this.router.navigate(["chat", receiverName])
+    this.router.navigate(["chat", receiverName])
 
-    })
   }
 
   ngOnInit(): void {
@@ -74,12 +72,27 @@ export class HomeComponent implements OnInit {
 
     // currentUserName
     if (this.user()) {
-      this.messageService.getChatHistory(this.user()?.username!).subscribe((usernames: string[]) => {
+      this.messageService.getChatHistory(this.user()!.username!).subscribe((usernames: string[]) => {
         this.chatHistory.set(usernames)
         this.filteredChatHistory.set(usernames)
-        // console.log(usernames, " usernames")
+      })
+
+      this.eventsService.message$.subscribe((message: Message) => {
+
+        if (
+          message.receiverUsername === this.user()!.username
+          // message.senderUsername === "this.receiverName()"
+
+        ) {
+          this.messageService.getChatHistory(this.user()?.username!).subscribe((usernames: string[]) => {
+            this.chatHistory.set(usernames)
+            this.filteredChatHistory.set(usernames)
+          })
+        }
       })
     }
+
+
 
   }
 

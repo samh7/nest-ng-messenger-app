@@ -1,11 +1,9 @@
 import { Component, inject, OnInit, output, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessagesService } from '../../services/messages.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../../shared/interfaces/user.interface';
-import { ChatHistoryDto } from '../../../shared/interfaces/chat-history';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-start-chat',
@@ -40,28 +38,29 @@ export class StartChatComponent implements OnInit {
     this.isModalOpen = false;
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (this.nameForm.valid) {
-      const name = this.nameForm.get('name')?.value;
 
-      await this.saveChatHistory(name!)
 
-      this.router.navigate(["chat", name!])
+      if (this.nameForm.value.name === this.user()?.username) return
+      const name = this.nameForm.value.name;
 
-      this.isModalClosed.emit();
+      this.authService.receiverUserExists(name!).subscribe((user: User | null) => {
+        if (user?.username !== name!) {
+          alert("User not found!")
+          return
+        }
+        else{
+          this.router.navigate(["chat", name!])
+
+          this.isModalClosed.emit();
+        }
+      })
+
+
     }
   }
 
-  async saveChatHistory(username: string) {
 
-    const chatHistoryDto: ChatHistoryDto = {
-      currentUsername: this.user()?.username!,
-      newsUsername: username
-    }
-
-    await firstValueFrom(this.messageService.saveChatHistrory(chatHistoryDto))
-
-
-  }
 }
 

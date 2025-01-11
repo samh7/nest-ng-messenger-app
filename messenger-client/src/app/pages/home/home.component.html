@@ -3,7 +3,7 @@
   <div
     class="bg-white h-[60px] flex items-center justify-between px-4 shadow-md"
   >
-    <span class="text-xl font-bold">WhassApp ({{ user()?.username}})</span>
+    <span class="text-xl font-bold">WhassApp ({{ user()?.username }})</span>
     <div class="flex space-x-4">
       <!-- <button>
         <img src="/images/search-icon.png" alt="Search" class="w-6 h-6" />
@@ -16,11 +16,14 @@
 
   <!-- Search Bar -->
   <div class="bg-white p-2">
-    <form [formGroup]="searchForm" class="flex items-center bg-gray-200 rounded-full px-3 py-2">
+    <form
+      [formGroup]="searchForm"
+      class="flex items-center bg-gray-200 rounded-full px-3 py-2"
+    >
       <img src="/images/search.png" alt="Search" class="w-5 h-5 mr-2" />
       <input
-      (ngModelChange)="search()"
-      formControlName="searchText"
+        (ngModelChange)="search()"
+        formControlName="searchText"
         type="text"
         placeholder="Search or start new chat"
         class="bg-transparent outline-none w-full text-sm"
@@ -40,10 +43,10 @@
       @for (chatHistoryItem of filteredChatHistory(); track $index) {
 
       <!-- Chat History Item -->
-
+      @if (chatHistoryItem !== user()!.username) {
       <app-chat-head [receiverName]="chatHistoryItem" />
 
-      }
+      } }
     </div>
   </div>
 
