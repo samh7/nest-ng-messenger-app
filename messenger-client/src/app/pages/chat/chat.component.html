@@ -7,10 +7,12 @@
     <div class="flex items-center space-x-3 ml-4">
       <img
         class="w-10 h-10 rounded-full"
-        src="/images/girl-pf.png"
+        src="/images/profile.jpg"
         alt="User"
       />
-      <span class="text-xl font-semibold">{{ receiverName()?? "Saved Messages" }}</span>
+      <span class="text-xl font-semibold"
+        >{{ receiverName() ?? "Saved Messages" }}
+      </span>
     </div>
     <div class="ml-auto relative">
       <button (click)="toggleMoreOption()" class="p-2">
@@ -42,7 +44,7 @@
       [text]="item.text"
       [isSender]="user()!.username !== item.senderUsername"
     />
-    } @if (isReceiverTyping()) {
+    } @if (isReceiverTyping() && user()?.username !== receiverName()) {
     <div class="w-full text-center mt-2">
       <div
         class="inline-flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded-full text-sm"

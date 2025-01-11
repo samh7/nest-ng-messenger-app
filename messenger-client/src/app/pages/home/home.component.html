@@ -3,27 +3,29 @@
   <div
     class="bg-white h-[60px] flex items-center justify-between px-4 shadow-md"
   >
-    <span class="text-xl font-bold">WhatsApp</span>
+    <span class="text-xl font-bold">WhassApp ({{ user()?.username}})</span>
     <div class="flex space-x-4">
-      <button>
+      <!-- <button>
         <img src="/images/search-icon.png" alt="Search" class="w-6 h-6" />
       </button>
       <button>
         <img src="/images/menu-icon.png" alt="Menu" class="w-6 h-6" />
-      </button>
+      </button> -->
     </div>
   </div>
 
   <!-- Search Bar -->
   <div class="bg-white p-2">
-    <div class="flex items-center bg-gray-200 rounded-full px-3 py-2">
-      <img src="/images/search-icon.png" alt="Search" class="w-5 h-5 mr-2" />
+    <form [formGroup]="searchForm" class="flex items-center bg-gray-200 rounded-full px-3 py-2">
+      <img src="/images/search.png" alt="Search" class="w-5 h-5 mr-2" />
       <input
+      (ngModelChange)="search()"
+      formControlName="searchText"
         type="text"
         placeholder="Search or start new chat"
         class="bg-transparent outline-none w-full text-sm"
       />
-    </div>
+    </form>
   </div>
 
   <!-- Chat List -->
@@ -31,11 +33,11 @@
     <div class="divide-y">
       <!-- Saved Messages Chat Item -->
 
-      <div>
+      <div class="border-b-gray-300 border-b-[5px]">
         <app-chat-head />
       </div>
 
-      @for (chatHistoryItem of chatHistory(); track $index) {
+      @for (chatHistoryItem of filteredChatHistory(); track $index) {
 
       <!-- Chat History Item -->
 
@@ -45,10 +47,16 @@
     </div>
   </div>
 
+  @if(isModalOpen()){
+  <app-start-chat (isModalClosed)="toggleModal()" />
+  }
+
   <!-- Floating Action Button -->
+  <!-- Modal Trigger -->
   <button
+    (click)="openModal()"
     class="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-green-600"
   >
-    <img src="/images/chat-icon.png" alt="New Chat" class="w-6 h-6" />
+    <img src="/images/messenger.png" alt="New Chat" class="w-6 h-6" />
   </button>
 </div>

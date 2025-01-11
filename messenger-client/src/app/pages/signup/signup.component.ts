@@ -43,7 +43,6 @@ export class SignupComponent {
 
       this.router.navigate(["/login"])
 
-      // console.log({username: user.username, email: user.email})
     })
   }
 

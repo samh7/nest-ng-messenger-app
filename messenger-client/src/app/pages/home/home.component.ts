@@ -6,28 +6,57 @@ import { ChatHeadComponent } from "../../components/chat-head/chat-head.componen
 import { MessagesService } from '../../services/messages.service';
 import { single } from 'rxjs';
 import { User } from '../../../shared/interfaces/user.interface';
+import { ChatComponentComponent } from "../../components/chat-component/chat-component.component";
+import { StartChatComponent } from "../../components/start-chat/start-chat.component";
 
 @Component({
   selector: 'app-home',
   imports: [
     RouterLink,
     ReactiveFormsModule,
-    ChatHeadComponent
+    ChatHeadComponent,
+    ChatComponentComponent,
+    StartChatComponent
   ],
   templateUrl: './home.component.html',
   styles: ``
 })
 export class HomeComponent implements OnInit {
 
+
   formBuilder = inject(FormBuilder)
   authService = inject(AuthService)
   router = inject(Router)
+  filteredChatHistory = signal<string[]>([])
   chatHistory = signal<string[]>([])
   receiverForm = this.formBuilder.group({
     receiver: ["", Validators.required]
   })
+  searchForm = this.formBuilder.group({
+    searchText: ["", Validators.required]
+  })
+  isModalOpen = signal(false);
   user = signal<User | null>(null)
   messageService = inject(MessagesService)
+
+  openModal() {
+    this.isModalOpen.set(true)
+  }
+
+
+  toggleModal() {
+    this.isModalOpen.update((value) => !value)
+
+  }
+
+
+  search() {
+    // console.log(this.searchForm.get("searchText")?.value)
+    if (!this.searchForm.value.searchText) this.filteredChatHistory.set(this.chatHistory())
+
+    this.filteredChatHistory.set(this.chatHistory().filter((value) => value.includes(this.searchForm.value.searchText!)))
+  }
+
   formSubmitted() {
 
     this.user.set(this.authService.getUserFromStorage())
@@ -45,9 +74,10 @@ export class HomeComponent implements OnInit {
 
     // currentUserName
     if (this.user()) {
-      this.messageService.getChatHistory("sila").subscribe((usernames: string[]) => {
+      this.messageService.getChatHistory(this.user()?.username!).subscribe((usernames: string[]) => {
         this.chatHistory.set(usernames)
-        console.log(usernames, " usernames")
+        this.filteredChatHistory.set(usernames)
+        // console.log(usernames, " usernames")
       })
     }
 

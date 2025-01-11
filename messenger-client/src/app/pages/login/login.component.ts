@@ -36,7 +36,7 @@ export class LoginComponent {
 
       this.authService.setUser(user)
       this.authService.saveUserToStorage(user)
-      console.log(user)
+      // console.log(user)
 
       this.router.navigate(["/home"])
 

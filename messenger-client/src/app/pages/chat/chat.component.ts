@@ -37,7 +37,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   isReceiverTyping = signal(false)
   location = inject(Location)
   eventsService = inject(EventsService)
-  isTyping = signal(false)
+  // isTyping = signal(false)
   private typingTimeout: any
   cdr = inject(ChangeDetectorRef)
   private isScrolling: boolean = false
@@ -57,6 +57,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     this.user.set(this.authService.getUserFromStorage()!)
     this.receiverName.set(this.route.snapshot.paramMap.get("name")!)
+
     let senderReceiverDto!: SenderReceiverDto
 
     if (this.receiverName()) {
@@ -72,11 +73,29 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       }
     }
 
-    this.eventsService.typing$.subscribe((typing) => {
-      this.isTyping.set(typing?.isTyping)
+    this.eventsService.message$.subscribe((message: Message) => {
+
+      if (message !== null) {
+
+        if (
+          message.receiverUsername === this.user()?.username &&
+          message.senderUsername === this.receiverName()!
+        ) {
+
+          this.messages.update((messages) => [...messages, message])
+
+        }
+      }
+    })
+
+
+    this.eventsService.typing$.subscribe((typing: TypingDto) => {
+      // this.isTyping.set(typing?.isTyping)
       this.isReceiverTyping.set(
         (typing?.username === this.receiverName()) &&
-        typing.isTyping
+        typing.isTyping &&
+        (typing?.receiverUsername === this.user()?.username!)
+
       )
     })
 
@@ -109,19 +128,25 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       }
     }
 
-    console.log(this.messageForm.value.message)
     this.messageService.sendMessageBetween(createMessageDto).subscribe((message) => {
       this.messages.update((messages) => [...messages, message])
+
+      this.eventsService.newMesage(message)
+
     })
+
     this.scrollToBottom()
+
     const typingDto: TypingDto = {
       username: this.user()!.username,
-      isTyping: false
+      isTyping: false,
+      receiverUsername: this.receiverName()!
     }
 
-    this.eventsService.typing(typingDto);
     clearTimeout(this.typingTimeout);
+    this.eventsService.typing(typingDto);
 
+    this.messageForm.value.message = null
     this.messageForm.reset()
   }
 
@@ -131,6 +156,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
     const typingDto: TypingDto = {
       username: this.user()!.username,
+      receiverUsername: this.receiverName()!,
       isTyping: true
     }
 
@@ -154,7 +180,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       }
 
     } catch (error) {
-      console.error('Error in scrollToBottom:', error);
+      // console.error('Error in scrollToBottom:', error);
     }
   }
 

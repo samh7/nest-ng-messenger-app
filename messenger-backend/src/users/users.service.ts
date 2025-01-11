@@ -3,13 +3,13 @@ import { CreateUserDto, LoginDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { compare, hash } from 'bcryptjs';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { UserReceiverDto } from './dto/user-receiver.dto';
 import { Message } from 'src/messages/entities/message.entity';
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
-import { filterChatHistory, sortMessages } from '../shared/utils';
+import { extractUsernames, filterChatHistory, sortMessages } from '../shared/utils';
 import { RecentUserChats } from './entities/recent-user-chats.entity';
 import { ChatHistorydDto } from './dto/chat-history.dto';
 import { UpdatetChatHistorydDto } from './dto/update-chat-history.dto';
@@ -33,6 +33,9 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
 
+    // createUserDto.email = createUserDto.email.trim()
+    // createUserDto.username = createUserDto.username.trim()
+    // createUserDto.password = createUserDto.password.trim()
     try {
       const hashedPassword = await hash(createUserDto.password, 10);
 
@@ -65,7 +68,10 @@ export class UsersService {
 
   async login(loginDto: LoginDto) {
     const canUserLogIn = await this.userRepository.findOne({ where: { username: loginDto.username } });
-    const compareHashes = compare(canUserLogIn.password, loginDto.password);
+
+    const compareHashes = await compare(loginDto.password, canUserLogIn.password);
+
+    console.log(compareHashes, " hashres")
 
     if (!compareHashes) throw new HttpException("User Not Authneticated", HttpStatus.UNAUTHORIZED);
 
@@ -90,7 +96,29 @@ export class UsersService {
 
       receiverExists = await this.findOne(userReceiverDto.receiverUsername);
 
+
       if (!receiverExists) throw new HttpException('User not found', HttpStatus.INTERNAL_SERVER_ERROR);
+
+
+      const fetchedMessages1 = await this.messageRepository.find({
+        where: {
+          receiverUsername: senderExists.username,
+          senderUsername: userReceiverDto.receiverUsername
+
+        }
+      })
+
+      const fetchedMessages2 = await this.messageRepository.find({
+        where: {
+          receiverUsername: userReceiverDto.receiverUsername,
+          senderUsername: senderExists.username
+
+        }
+      })
+
+      const fetchedMessages = fetchedMessages1.concat(fetchedMessages2)
+
+      return sortMessages(fetchedMessages);
 
     }
     else {
@@ -107,14 +135,6 @@ export class UsersService {
       return sortMessages(fetchedMessages);
 
     }
-    const fetchedMessages = await this.messageRepository
-      .createQueryBuilder("message")
-      .where('message.senderUsername = :username ', { username: userReceiverDto.senderUsername })
-      .orWhere('message.receiverUsername = :username ', { username: userReceiverDto.receiverUsername })
-      .getMany();
-
-
-    return sortMessages(fetchedMessages);
   }
 
   async sendMessagesBetween(createMessageDto: CreateMessageDto) {
@@ -157,14 +177,39 @@ export class UsersService {
 
     try {
 
-      const fetchedHistory = await this.chatHistoryRepository.findOne({
-        where:
-        {
-          currentUserName: chatHistorydDto.currentUserName
+      // const fetchedHistory = await this.chatHistoryRepository.findOne({
+      //   where:
+      //   {
+      //     currentUserName: chatHistorydDto.currentUserName
+      //   }
+      // })
+
+      // return filterChatHistory(fetchedHistory.userNames)
+
+      const fetcheMessagesSender = await this.messageRepository.find({
+
+        where: {
+          senderUsername: chatHistorydDto.currentUserName,
         }
+
       })
 
-      return filterChatHistory(fetchedHistory.userNames)
+      const fetcheMessagesReceiver = await this.messageRepository.find({
+
+        where: {
+          receiverUsername: chatHistorydDto.currentUserName
+        }
+
+      })
+
+
+      const receiveUsernames = extractUsernames(fetcheMessagesReceiver)
+      const senderUsernames = extractUsernames(fetcheMessagesSender)
+
+      const usernames = receiveUsernames.concat(senderUsernames)
+
+
+      return filterChatHistory(usernames)
 
     }
     catch (error) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, LoginDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -6,8 +6,10 @@ import { UserReceiverDto } from './dto/user-receiver.dto';
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { ChatHistorydDto } from './dto/chat-history.dto';
 import { UpdatetChatHistorydDto } from './dto/update-chat-history.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 

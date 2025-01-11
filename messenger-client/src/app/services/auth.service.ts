@@ -18,15 +18,25 @@ export class AuthService {
   userSubject = new BehaviorSubject<any>(null)
   user$ = this.userSubject.asObservable()
 
+  withCredentials = {
+    withCredentials: true
+  }
+
   http = inject(HttpClient)
 
+
+
+  status() {
+    return this.http.get(backend_url + "/auth/status", this.withCredentials)
+  }
+
   signup(signupDto: SignupDto) {
-    return this.http.post<User>(backend_url + "/users", signupDto)
+    return this.http.post<User>(backend_url + "/auth/signup", signupDto, this.withCredentials)
   }
 
   login(loginDto: LoginDto) {
 
-    return this.http.post<User>(backend_url + "/users/login", loginDto)
+    return this.http.post<User>(backend_url + "/auth/login", loginDto, this.withCredentials)
 
   }
 

@@ -9,4 +9,8 @@ export class TypingDto {
     @IsBoolean()
     @IsNotEmpty()
     isTyping: boolean
+
+    @IsString()
+    @IsNotEmpty()
+    receiverUsername: string
 }

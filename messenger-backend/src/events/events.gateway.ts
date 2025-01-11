@@ -2,6 +2,8 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { EventsService } from './events.service';
 import { Server, Socket } from 'socket.io';
 import { TypingDto } from './dto/typing.dto';
+import { NewMessageDto } from './dto/new-message.dto';
+import { Message } from 'src/messages/entities/message.entity';
 
 // @UsePipes(validationPipe)
 @WebSocketGateway({
@@ -21,9 +23,6 @@ export class EventsGateway {
     @MessageBody("name") name: string,
     @ConnectedSocket() client: Socket
   ) {
-
-    console.log(name)
-
   }
 
 
@@ -33,10 +32,16 @@ export class EventsGateway {
     @ConnectedSocket() client: Socket
 
   ) {
+    this.server.emit("typing", typingDto)
+  }
 
-    // console.log(client.id)
-    console.log(typingDto)
+  @SubscribeMessage('message')
+  async newMessage(
+    @MessageBody() messageDto: Message,
+    @ConnectedSocket() client: Socket
 
-    this.server.emit("typing", { username: typingDto.username, isTyping: typingDto.isTyping })
+  ) {
+
+    this.server.emit("message", messageDto)
   }
 }
