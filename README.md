@@ -7,9 +7,9 @@
 3. New Message Events
 
 ## Tech used
-1. Angular for client
+1. Angular for Client
 2. Nestjs for Backend
-3. Typeorm and MYSQL/XAMP
+3. Typeorm and MYSQL/XAMPP for Database
 4. Passport Js for Authentication
 
 
