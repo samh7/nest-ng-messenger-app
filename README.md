@@ -6,6 +6,13 @@
 2. Typing Indicators
 3. New Message Events
 
+## Tech used
+1. Angular for client
+2. Nestjs for Backend
+3. Typeorm and MYSQL/XAMP
+4. Passport Js for Authentication
+
+
 <img  width="800"  src="./messenger-app.gif"/>
 
 # The following .env variables are required
