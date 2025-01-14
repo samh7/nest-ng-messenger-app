@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
+import { CreateReplyDto } from './dto/create-reply.dto';
 
 @Injectable()
 export class MessagesService {
@@ -55,6 +56,26 @@ export class MessagesService {
     if (!savedMessage) throw new HttpException('Message creation failed', HttpStatus.INTERNAL_SERVER_ERROR);;
 
     return createMessageDto
+
+  }
+
+
+  async addReply(createReplyDto: CreateReplyDto) {
+
+    const baseMessage = await this.findOne(createReplyDto.baseMessageId)
+
+    const replyMessage = await this.findOne(createReplyDto.replyMesssageId)
+
+    // if (
+    //   baseMessage.senderUsername !== replyMessage.receiverUsername ||
+    //   replyMessage.senderUsername !== baseMessage.receiverUsername
+    // ) return
+
+    replyMessage.replyId = baseMessage.id
+
+    return await this.messageRepository.save(replyMessage)
+
+
 
   }
 

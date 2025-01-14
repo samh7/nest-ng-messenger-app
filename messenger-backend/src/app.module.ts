@@ -37,5 +37,6 @@ import { ConfigModule } from '@nestjs/config';
     EventsModule,
     AuthModule
   ],
+  providers: [],
 })
 export class AppModule { }

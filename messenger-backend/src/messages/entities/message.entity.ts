@@ -5,8 +5,8 @@ import { Column, Entity } from "typeorm";
 export class Message extends BaseEntity {
 
 
-    // @Column({ nullable: true })
-    // replyId: string
+    @Column({ nullable: true })
+    replyId: string
 
 
     @Column({ nullable: false })
