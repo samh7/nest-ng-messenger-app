@@ -37,4 +37,11 @@ export class MessagesService {
     return this.http.post<Message>(url, chatHistoryDto, this.withCredentials)
 
   }
+
+  deleteMessage(id: string) {
+    const url = backend_url + `/messages/${id}`
+    return this.http.delete<{ id: string }>(url, this.withCredentials)
+
+  }
 }
+

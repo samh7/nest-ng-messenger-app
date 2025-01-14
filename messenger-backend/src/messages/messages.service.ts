@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -97,7 +97,10 @@ export class MessagesService {
     try {
 
       const message = await this.findOne(id)
+
       await this.messageRepository.remove(message);
+
+      return { id }
 
     } catch (error) {
 

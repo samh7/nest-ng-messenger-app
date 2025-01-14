@@ -1,17 +1,18 @@
-<div class="flex items-start  gap-2.5 my-5"
-[class]="isSender()? 'justify-start': 'justify-end'"
+<div
+  class="flex items-start gap-2.5 my-5"
+  [class]="isSender() ? 'justify-start' : 'justify-end'"
 >
   <div
     (click)="toggleClicked()"
     class="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-xl dark:bg-gray-700"
   >
     <div class="flex items-center space-x-2 rtl:space-x-reverse">
-      <span class="text-sm font-normal text-gray-500 dark:text-gray-400"
-        >{{timeSend() | utcToLocalTime}}</span
-      >
+      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{
+        timeSend() | utcToLocalTime
+      }}</span>
     </div>
     <p class="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
-      {{text()}}
+      {{ text() }}
       <!-- Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quo ex vitae,
       explicabo maiores possimus ducimus. -->
     </p>
@@ -41,43 +42,34 @@
     </button>
     <div
       class="bottom-0 mt-[20px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600"
-      [class]="moreOptionsClicked() ? '' : 'hidden'"
+      [class]="moreOptionsClickedInput() ? '' : 'hidden'"
     >
       <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Reply</a
-          >
+        <li
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          Reply
         </li>
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Forward</a
-          >
+        <li
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          Forward
         </li>
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Copy</a
-          >
+        <li
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          Copy
         </li>
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Report</a
-          >
+        <li
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          Report
         </li>
-        <li>
-          <a
-            href="#"
-            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Delete</a
-          >
+        <li
+          (click)="deleteMessage()"
+          class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          Delete
         </li>
       </ul>
     </div>

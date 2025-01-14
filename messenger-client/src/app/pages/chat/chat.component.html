@@ -39,11 +39,16 @@
     class="flex-1 overflow-y-auto bg-[url('/images/chat-bg-wa.png')] bg-cover bg-center p-4"
   >
     @for (item of messages(); track $index; ) {
-    <app-chat-component
-      [timeSend]="item.createdAt"
-      [text]="item.text"
-      [isSender]="user()!.username !== item.senderUsername"
-    />
+    <div [id]="item.id">
+      <app-chat-component
+        [timeSend]="item.createdAt"
+        [text]="item.text"
+        [isSender]="user()!.username !== item.senderUsername"
+        (delete)="deleteMessage(item.id)"
+        [moreOptionsClickedInput]="moreOptionsClickedVal()"
+        (moreOptionsClickedEvent)="moreOptionsClicked(item.id)"
+      />
+    </div>
     } @if (isReceiverTyping() && user()?.username !== receiverName()) {
     <div class="w-full text-center mt-2">
       <div

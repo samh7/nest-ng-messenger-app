@@ -40,6 +40,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   private typingTimeout!: number
   cdr = inject(ChangeDetectorRef)
   private isScrolling = false
+  fragmentValue = signal<string | null>(null)
+  moreOptionsClickedVal = signal(false)
+
+  isScrolled = false
 
   @ViewChild('messageContainer', { static: true }) messageContainer!: ElementRef;
   isUserInitiatedScroll = false;
@@ -50,6 +54,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       this.scrollToBottom();
     }
     this.cdr.detectChanges();
+
   }
 
 
@@ -100,6 +105,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
     this.messageService.getMessageBetween(senderReceiverDto).subscribe((messages: Message[]) => {
       this.messages.set(messages)
+    })
+
+
+    this.route.fragment.subscribe((frag) => {
+      this.fragmentValue.set(frag)
     })
   }
 
@@ -170,8 +180,17 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   scrollToBottom(): void {
     try {
+      let lastMessage;
+
       const container = this.messageContainer!.nativeElement;
-      const lastMessage = container.lastElementChild;
+
+      if (this.fragmentValue()) {
+        lastMessage = document.getElementById(this.fragmentValue()!);;
+        console.log(lastMessage)
+      }
+      else {
+        lastMessage = container.lastElementChild;
+      }
 
       if (lastMessage) {
         lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -189,8 +208,23 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
 
 
+  deleteMessage(id: string) {
+    this.messageService.deleteMessage(id).subscribe((deletedMessage: { id: string }) => {
+
+      this.moreOptionsClicked(id)
+      this.messages.update((messages) => messages.filter((message) =>
+        message.id !== deletedMessage.id
+      )
+
+      )
+    })
+  }
 
 
 
+  moreOptionsClicked(id: string) {
+    this.isUserInitiatedScroll = true
+    this.moreOptionsClickedVal.update((val) => !val)
+  }
 
 }
